@@ -1,5 +1,5 @@
-name: 'Docker Build on Tag Action'
-description: 'Build a docker image on a new repository tag'
+name: Docker Build on Tag Action
+description: Build a docker image on a new repository ta
 inputs:
   repository:
     description: name of the repository
@@ -8,6 +8,9 @@ inputs:
     description: file to store the latest tag
     required: false
     default: latest.txt
+branding:
+  icon: package
+  color: blue
 runs:
   using: composite
   steps:

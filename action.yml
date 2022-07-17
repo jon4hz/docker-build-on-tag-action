@@ -1,0 +1,40 @@
+---
+name: Docker build on tag Action
+description: Build a docker image on a new repository tag
+inputs:
+  repository:
+    description: name of the repository
+    required: true
+  tagfile:
+    description: file to store the latest tag
+    required: false
+    default: latest.txt
+
+runs:
+  using: composite
+  steps:
+    - 
+      name: Checkout
+      id: checkout
+      uses: actions/checkout@v3
+      with:
+        repository: ${{ inputs.repository }}
+    -   
+      name: Get Previous tag
+      id: latesttag
+      uses: "WyriHaximus/github-action-get-previous-tag@v1"
+      with:
+        fallback: 1.0.0
+    - 
+      name: Check Latest Tag
+      shell: bash
+      run: |
+        TAGFILE=${{ inputs.tagfile }}
+        if [ -f "$TAGFILE" ]; then
+          LATEST=${{ steps.latesttag.outputs.tag }}
+          if [ "$LATEST" == $"$(cat $TAGFILE)" ]; then
+            echo tag did not change, nothing to do.
+            exit 0
+          fi
+        fi
+        git checkout "$LATEST"

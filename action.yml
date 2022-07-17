@@ -4,10 +4,14 @@ inputs:
   repository:
     description: name of the repository
     required: true
+  ref:
+    description: ref to checkout (default=main)
+    default: main
+    required: false
   tagfile:
     description: file to store the latest tag
-    required: false
     default: latest.txt
+    required: false
 branding:
   icon: package
   color: blue
@@ -20,6 +24,7 @@ runs:
       uses: actions/checkout@v3
       with:
         repository: ${{ inputs.repository }}
+        ref: ${{ inputs.ref }}
     -   
       name: Get Previous tag
       id: latesttag

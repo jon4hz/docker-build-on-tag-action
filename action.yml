@@ -41,8 +41,8 @@ runs:
       shell: bash
       run: |
         TAGFILE=${{ inputs.tagfile }}
+        LATEST=${{ steps.latesttag.outputs.tag }}
         if [ -f "$TAGFILE" ]; then
-          LATEST=${{ steps.latesttag.outputs.tag }}
           if [ "$LATEST" == $"$(cat $TAGFILE)" ]; then
             echo tag did not change, nothing to do.
             exit 0

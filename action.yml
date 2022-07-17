@@ -29,6 +29,7 @@ runs:
         repository: ${{ inputs.repository }}
         ref: ${{ inputs.ref }}
         token: ${{ inputs.token }}
+        fetch-depth: 0
     -   
       name: Get Previous tag
       id: latesttag

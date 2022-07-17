@@ -1,5 +1,5 @@
 ---
-name: Docker build on tag Action
+name: Docker Build on Tag Action
 description: Build a docker image on a new repository tag
 inputs:
   repository:
@@ -22,7 +22,7 @@ runs:
     -   
       name: Get Previous tag
       id: latesttag
-      uses: "WyriHaximus/github-action-get-previous-tag@v1"
+      uses: WyriHaximus/github-action-get-previous-tag@v1
       with:
         fallback: 1.0.0
     - 

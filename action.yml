@@ -12,6 +12,9 @@ inputs:
     description: file to store the latest tag
     default: latest.txt
     required: false
+  token:
+    description: your github access token
+    required: true
 branding:
   icon: package
   color: blue
@@ -25,6 +28,7 @@ runs:
       with:
         repository: ${{ inputs.repository }}
         ref: ${{ inputs.ref }}
+        token: ${{ inputs.token }}
     -   
       name: Get Previous tag
       id: latesttag

@@ -1,5 +1,6 @@
 name: Docker Build on Tag Action
 description: Build a docker image on a new repository ta
+
 inputs:
   repository:
     description: name of the repository
@@ -15,9 +16,32 @@ inputs:
   token:
     description: your github access token
     required: true
+  docker_registry:
+    description: the registry to push the image to
+    default: hub.docker.com
+    required: false
+  docker_username:
+    description: username to login
+    required: true
+  docker_password:
+    description: password to login
+    required: true
+  docker_repository:
+    description: repository to push the image to
+    required: true
+  dockerfile:
+    description: the dockerfile
+    default: Dockerfile
+    required: false
+  context:
+    description: docker build context
+    default: .
+    required: false
+
 branding:
   icon: package
   color: blue
+
 runs:
   using: composite
   steps:
@@ -37,7 +61,7 @@ runs:
       with:
         fallback: 1.0.0
     - 
-      name: Check Latest Tag
+      name: Checkout Latest Tag
       shell: bash
       run: |
         TAGFILE=${{ inputs.tagfile }}
@@ -48,4 +72,32 @@ runs:
             exit 0
           fi
         fi
+        git config --local advice.detachedHead false
         git checkout "$LATEST"
+    -
+      name: Docker Login
+      uses: docker/login-action@v2
+      with:
+        registry: ${{ inputs.docker_registry }}
+        username: ${{ inputs.docker_username }}
+        password: ${{ inputs.docker_password }}
+    -
+      name: Docker Meta
+      id: meta
+      uses: docker/metadata-action@v3
+      with:
+        images: |
+          ${{ inputs.docker_registry }}/${{ inputs.docker_repository }}
+        tags: |
+          type=raw,value=latest
+          type=semver,pattern={{version}}
+          type=semver,pattern={{major}}.{{minor}}
+    -
+      name: Build and Push the Docker Image
+      uses: docker/build-push-action@v3
+      with:
+        file: Dockerfile
+        context: .
+        push: true
+        tags: ${{ steps.meta.outputs.tags }}
+

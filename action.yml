@@ -54,7 +54,7 @@ runs:
       name: Set repo name
       shell: bash
       run: |
-        echo REPONAME=$(basepath ${{ inputs.repository }}) >> $GITHUB_ENV
+        echo REPONAME=$(basepath ${{ github.repository }}) >> $GITHUB_ENV
     - 
       name: Checkout Src
       uses: actions/checkout@v3

@@ -59,20 +59,13 @@ runs:
       uses: actions/checkout@v3
       with:
         path: ./repo
-    -
-      name: Switch WD
-      shell: bash
-      run: cd src
     -   
       name: Get Previous tag
       id: latesttag
       uses: WyriHaximus/github-action-get-previous-tag@v1
+      working-directory: ./src
       with:
         fallback: 1.0.0
-    -
-      name: Switch WD
-      shell: bash
-      run: cd ..
     - 
       name: Checkout Latest Tag
       shell: bash
@@ -91,6 +84,7 @@ runs:
     -
       name: Docker Login
       uses: docker/login-action@v2
+      working-directory: ./src
       with:
         registry: ${{ inputs.docker_registry }}
         username: ${{ inputs.docker_username }}
@@ -99,6 +93,7 @@ runs:
       name: Docker Meta
       id: meta
       uses: docker/metadata-action@v3
+      working-directory: ./src
       with:
         images: |
           ${{ inputs.docker_registry }}/${{ inputs.docker_repository }}
@@ -109,15 +104,12 @@ runs:
     -
       name: Build and Push the Docker Image
       uses: docker/build-push-action@v3
+      working-directory: ./src
       with:
         file: ${{ inputs.dockerfile }}
         context: ${{ inputs.context }}
         push: true
         tags: ${{ steps.meta.outputs.tags }}
-    -
-      name: Switch WD
-      shell: bash
-      run: cd ..
     -
       name: Set Latest Version to File
       shell: bash

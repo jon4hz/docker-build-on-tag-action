@@ -46,25 +46,38 @@ runs:
   using: composite
   steps:
     - 
-      name: Checkout
-      id: checkout
+      name: Checkout Src
       uses: actions/checkout@v3
       with:
         repository: ${{ inputs.repository }}
         ref: ${{ inputs.ref }}
         token: ${{ inputs.token }}
         fetch-depth: 0
+        path: ./src
+    -
+      name: Checkout Repo
+      uses: actions/checkout@v3
+      with:
+        path: ./repo
+    -
+      name: Switch WD
+      shell: bash
+      run: cd src
     -   
       name: Get Previous tag
       id: latesttag
       uses: WyriHaximus/github-action-get-previous-tag@v1
       with:
         fallback: 1.0.0
+    -
+      name: Switch WD
+      shell: bash
+      run: cd ..
     - 
       name: Checkout Latest Tag
       shell: bash
       run: |
-        TAGFILE=${{ inputs.tagfile }}
+        TAGFILE=repo/${{ inputs.tagfile }}
         LATEST=${{ steps.latesttag.outputs.tag }}
         if [ -f "$TAGFILE" ]; then
           if [ "$LATEST" == $"$(cat $TAGFILE)" ]; then
@@ -72,6 +85,7 @@ runs:
             exit 0
           fi
         fi
+        cd src
         git config --local advice.detachedHead false
         git checkout "$LATEST"
     -
@@ -100,4 +114,18 @@ runs:
         context: ${{ inputs.context }}
         push: true
         tags: ${{ steps.meta.outputs.tags }}
-
+    -
+      name: Switch WD
+      shell: bash
+      run: cd ..
+    -
+      name: Set Latest Version to File
+      shell: bash
+      run: |
+        TAGFILE=repo/${{ inputs.tagfile }}
+        LATEST=${{ steps.latesttag.outputs.tag }}
+        echo "$LATEST" > "$TAGFILE"
+        cd repo
+        git add .
+        git commit -m "update to $LATEST"
+        git push

@@ -49,12 +49,12 @@ runs:
       name: Set src name
       shell: bash
       run: |
-        echo SRCNAME=$(basepath ${{ inputs.repository }}) >> $GITHUB_ENV
+        echo SRCNAME=$(basename ${{ inputs.repository }}) >> $GITHUB_ENV
     -
       name: Set repo name
       shell: bash
       run: |
-        echo REPONAME=$(basepath ${{ github.repository }}) >> $GITHUB_ENV
+        echo REPONAME=$(basename ${{ github.repository }}) >> $GITHUB_ENV
     - 
       name: Checkout Src
       uses: actions/checkout@v3
